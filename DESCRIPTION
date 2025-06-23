@@ -1,0 +1,15 @@
+Package: GLATOSshiny
+Title: Making the GLATOS R package accessible via Shiny
+Version: 0.0.0.9000
+Authors@R: 
+    person("Nick", "Boucher", , "bouche66@msu.edu", role = c("aut", "cre"))
+Description: This Shiny app makes some of the GLATOS package functionality available as a Shiny app for researchers who do not use R.
+License: What license is it under?
+Imports: 
+    config,
+    glatos,
+    golem,
+    shiny
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.2
