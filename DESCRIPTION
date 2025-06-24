@@ -1,4 +1,4 @@
-Package: GLATOSshiny
+Package: GLATOSGolem
 Title: Making the GLATOS R package accessible via Shiny
 Version: 0.0.0.9000
 Authors@R: 
