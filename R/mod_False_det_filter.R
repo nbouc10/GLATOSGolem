@@ -13,9 +13,23 @@ mod_False_det_filter_ui <- function(id) {
     fluidRow(
       column(4,
              #Button for file upload
-             fileInput(ns("upload"), NULL, buttonLabel = "Upload...", multiple = TRUE, accept = ".csv"),
+             div(
+               style = "display: flex; gap: 0.5rem;",
+               fileInput(
+                 ns("upload"), NULL,
+                 buttonLabel = "Upload...", multiple = TRUE, accept = ".csv"
+               ),
+               shiny::icon("circle-question") |>
+                 bslib::tooltip("Upload a detections CSV from a GLATOS data export")
+             ),
              #Set tf
-             numericInput(ns("lag"), "Threshold time interval (seconds)", value = 0, min = 0, max = 180000),
+             div(
+               style = "display: flex; align-items: center; gap: 0.5rem;",
+             numericInput(ns("lag"), "Threshold time interval (seconds)", value = 0, min = 0, max = 180000
+            ),
+             shiny::icon("circle-question") |>
+               bslib::tooltip("Researchers often select a threshold of 30 times the nominal delay (e.g. 3600 for a tag with 120 second nominal delay)")
+             ),
              #button for running filter
              actionButton(ns("runfilter"), "Run false detections filter", class = "btn-lg btn-success"),
              #button to download filtered detections
@@ -26,7 +40,7 @@ mod_False_det_filter_ui <- function(id) {
              plotOutput(ns("plot_dets"), height = "500px")
       )
 
-  ))
+    ))
 }
 
 #' False_det_filter Server Functions

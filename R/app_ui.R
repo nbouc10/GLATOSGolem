@@ -8,12 +8,21 @@ app_ui <- function(request) {
   tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
+
     # Your application UI logic
-    navbarPage(
-      titlePanel("GLATOS Shiny"),
-      tabPanel("False detection filter", mod_False_det_filter_ui("False_det_filter_1")),
-      tabPanel("Events filter", mod_Events_filter_ui("Events_filter_1")),
-      tabPanel("Abacus plot", mod_Abacus_plot_ui("Abacus_plot_1"))
+    bslib::page_sidebar(
+      title = div("GLATOS Shiny Application",
+                  img(src ="www/glatosFish.png", height = "45px", width = "45px",
+                      style = "position: absolute;
+                           top: 1px;
+                           right: 2%;")),
+      theme = app_theme(),
+      sidebar = NULL,  # or actual sidebar content
+      bslib::navset_card_underline(
+        bslib::nav_panel("False detection filter", mod_False_det_filter_ui("False_det_filter_1")),
+        bslib::nav_panel("Events filter", mod_Events_filter_ui("Events_filter_1")),
+        bslib::nav_panel("Abacus plot", mod_Abacus_plot_ui("Abacus_plot_1"))
+      )
     )
   )
 }
