@@ -12,24 +12,28 @@ mod_False_det_filter_ui <- function(id) {
   tagList(
     fluidRow(
       column(4,
-             #Button for file upload
+             # CSV Upload label + tooltip
              div(
-               style = "display: flex; gap: 0.5rem;",
+               tags$label(
+                 "CSV Upload ",
+                 shiny::icon("circle-question") |>
+                   bslib::tooltip("Upload a detections CSV from a GLATOS data export")
+               ),
                fileInput(
                  ns("upload"), NULL,
                  buttonLabel = "Upload...", multiple = TRUE, accept = ".csv"
-               ),
-               shiny::icon("circle-question") |>
-                 bslib::tooltip("Upload a detections CSV from a GLATOS data export")
+               )
              ),
-             #Set tf
-             div(
-               style = "display: flex; align-items: center; gap: 0.5rem;",
-             numericInput(ns("lag"), "Threshold time interval (seconds)", value = 0, min = 0, max = 180000
-            ),
-             shiny::icon("circle-question") |>
-               bslib::tooltip("Researchers often select a threshold of 30 times the nominal delay (e.g. 3600 for a tag with 120 second nominal delay)")
-             ),
+            # Threshold label + tooltip
+            div(
+            tags$label(
+            "Threshold time interval (seconds) ",
+            shiny::icon("circle-question") |>
+            bslib::tooltip("Researchers often select a threshold of 30 times the nominal delay (e.g. 3600 for a tag with 120 second nominal delay)")
+                      ),
+            numericInput(ns("lag"), NULL, value = 0, min = 0, max = 180000)
+              ),
+
              #button for running filter
              actionButton(ns("runfilter"), "Run false detections filter", class = "btn-lg btn-success"),
              #button to download filtered detections
