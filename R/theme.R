@@ -4,7 +4,7 @@
 #' @export
 app_theme <- function() {
   bslib::bs_theme(
-    preset = "darkly",
+    preset = "shiny",
     version = 5,
     #fg = "#000",
     #bg = "#ace0f0",
