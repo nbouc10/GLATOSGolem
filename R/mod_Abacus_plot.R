@@ -11,7 +11,6 @@ mod_Abacus_plot_ui <- function(id) {
     ns <- NS(id)
     tagList(
       fluidRow(
-        column(4,
                #Button for file upload
                fileInput(ns("upload"), NULL, buttonLabel = "Upload...", multiple = TRUE, accept = ".csv"),
                #Set tf
@@ -19,14 +18,12 @@ mod_Abacus_plot_ui <- function(id) {
                #button for running filter
                actionButton(ns("runplot"), "Generate abacus plot", class = "btn-lg btn-success"),
                #button to download filtered detections
-               downloadButton(ns("download1"), "Download abacus plot")
-        ),
-        column(8,
+               downloadButton(ns("download1"), "Download abacus plot"),
                #plot showing proportion of detections exceeding filter
                plotOutput(ns("plot_abacus"), height = "500px")
         )
 
-      ))
+      )
 }
 
 

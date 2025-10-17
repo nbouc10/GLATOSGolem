@@ -11,13 +11,20 @@ mod_False_det_filter_ui <- function(id) {
   ns <- NS(id)
   tagList(
     fluidRow(
-      column(4,
-             # CSV Upload label + tooltip
+      # CSV Upload label + tooltip
              div(
                tags$label(
                  "CSV Upload ",
                  shiny::icon("circle-question") |>
-                   bslib::tooltip("Upload a detections CSV from a GLATOS data export")
+                   bslib::tooltip(
+                     HTML(
+                       paste0(
+                         "Upload a detections CSV from a GLATOS data export.<br>",
+                         'Click <a href="https://ocean-tracking-network.r-universe.dev/glatos/doc/manual.html#false_detections" target="_blank" style="color:#007bff; text-decoration:underline;">here</a> for more information.'
+                       )
+                     ),
+                     allow_html = TRUE
+                   )
                ),
                fileInput(
                  ns("upload"), NULL,
@@ -26,31 +33,37 @@ mod_False_det_filter_ui <- function(id) {
              ),
             # Threshold label + tooltip
             div(
-            tags$label(
+                tags$label(
             "Threshold time interval (seconds) ",
             shiny::icon("circle-question") |>
             bslib::tooltip("Researchers often select a threshold of 30 times the nominal delay (e.g. 3600 for a tag with 120 second nominal delay)")
                       ),
             numericInput(ns("lag"), NULL, value = 0, min = 0, max = 180000)
               ),
-
              #button for running filter
              actionButton(ns("runfilter"), "Run false detections filter", class = "btn-lg btn-success"),
              #button to download filtered detections
-             downloadButton(ns("download1"), "Download filtered detections")
-      ),
-      column(8,
-             #plot showing proportion of detections exceeding filter
-             plotOutput(ns("plot_dets"), height = "500px")
+             downloadButton(ns("download1"), "Download filtered detections"),
+             # Plot in a card
+             bslib::card(
+               full_screen = TRUE,
+               bslib::card_header("Proportion of detections exceeding the threshold time interval"),
+               plotOutput(ns("plot_dets"))
+             ),
+             # Table in a card below
+             bslib::card(
+               full_screen = TRUE,
+               bslib::card_header("Filtered Detections"),
+               DT::dataTableOutput(ns("Preview_dets"))
+             )
       )
-
-    ))
+    )
 }
 
 #' False_det_filter Server Functions
 #'
 #' @noRd
-mod_False_det_filter_server <- function(id){
+mod_False_det_filter_server <- function(id, datasets){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
     # Read in uploaded CSV
@@ -70,7 +83,7 @@ mod_False_det_filter_server <- function(id){
       }
 
       # Proceed with reading the .csv file
-      read.csv(input$upload$datapath)
+      glatos::read_glatos_detections(input$upload$datapath)
     })
 
     # Reactive for filtered detections
@@ -78,9 +91,10 @@ mod_False_det_filter_server <- function(id){
       req(data())  # Ensure data is available
 
       # Run false_detections() without plotting (Shiny will handle the plotting separately)
-      filtered_data <- glatos::false_detections(det = data(), tf = input$lag, show_plot = TRUE)
+      #filtered_data <-
+      glatos::false_detections(det = data(), tf = input$lag, show_plot = TRUE)
 
-      return(filtered_data)
+      #return(filtered_data)
     })
 
     # Render plot inside Shiny
@@ -89,7 +103,11 @@ mod_False_det_filter_server <- function(id){
       # Run false_detections() again, but only for the plot
       glatos::false_detections(det = filtered_results(), tf = input$lag, show_plot = TRUE)
     })
-
+    # Render filtered data
+    output$Preview_dets <- DT::renderDataTable({
+      req(filtered_results())  # Ensure filtered results are available
+      filtered_results()
+    })
     # Download filtered detections
     output$download1 <- downloadHandler(
       filename = function() {
@@ -100,6 +118,10 @@ mod_False_det_filter_server <- function(id){
         write.csv(filtered_results(), file, row.names = FALSE)
       }
     )
+    # Add filtered dataset to shared object
+    observeEvent(filtered_results(), {
+      datasets$falsedet_filtered <- filtered_results()
+    })
   })
 }
 
